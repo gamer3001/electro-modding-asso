@@ -1,0 +1,320 @@
+/* ============================================================
+   1. DESIGN TOKENS (CAHIER DES CHARGES PARTIE B)
+   ============================================================ */
+:root{
+  /* Couleurs */
+  --color-fond:#0A0A0A;
+  --color-surface:#2A6F5B;        /* Vert-cuivre */
+  --color-texte:#F5F5F5;          /* Blanc cassé */
+  --color-texte-secondaire:#A8D5C0; /* Vert-cuivre pâle */
+  --color-accent:#D97742;         /* Cuivre brillant */
+  --color-erreur:#C43E3E;         /* Rouge brique */
+
+  /* Typographie */
+  --font-family:"Space Grotesk",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-weight-regular:400;
+  --font-weight-bold:600;
+  --line-height-base:1.65;
+  --line-height-heading:1.2;
+  --max-width-text:68ch;
+
+  /* Espacement (Base 8px) */
+  --space-unit:8px;
+  --space-xs:calc(var(--space-unit)*0.5);   /* 4px */
+  --space-s:calc(var(--space-unit)*1);      /* 8px */
+  --space-m:calc(var(--space-unit)*2);      /* 16px */
+  --space-l:calc(var(--space-unit)*3);      /* 24px */
+  --space-xl:calc(var(--space-unit)*4);     /* 32px */
+  --space-2xl:calc(var(--space-unit)*6);    /* 48px */
+  --space-3xl:calc(var(--space-unit)*8);    /* 64px */
+
+  /* Fluid Typography Clamps */
+  --fs-step--1:clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --fs-step-0:clamp(1rem, 0.95rem + 0.25vw, 1.125rem);       /* Body */
+  --fs-step-1:clamp(1.25rem, 1.1rem + 1vw, 1.75rem);         /* H3 */
+  --fs-step-2:clamp(1.75rem, 1.5rem + 2vw, 3rem);            /* H2 */
+  --fs-step-3:clamp(2.5rem, 2rem + 3vw, 5.5rem);             /* H1 Max 5.5rem */
+
+  /* Mise en page */
+  --header-height:56px;
+  --container-width:90%;
+  --container-max:1200px;
+  --radius:0;               /* Aucun arrondi global */
+  --radius-btn:0;           /* Boutons coins droits */
+
+  /* Profondeur (Unique élévation) */
+  --shadow-elevation:0 2px 8px rgba(0,0,0,0.25);
+
+  /* Mouvement */
+  --easing-standard:cubic-bezier(0.22,1,0.36,1);
+  --duration-fast:150ms;
+  --duration-normal:250ms;
+  --duration-slow:400ms;
+  --duration-signature:800ms; /* Interaction signature */
+
+  /* Z-index */
+  --z-header:1000;
+
+  /* Breakpoints */
+  --bp-mobile:480px;
+  --bp-tablet:768px;
+  --bp-desktop:1024px;
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+*, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *, *::before, *::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}
+}
+
+body{
+  font-family:var(--font-family);
+  font-size:var(--fs-step-0);
+  line-height:var(--line-height-base);
+  font-weight:var(--font-weight-regular);
+  background-color:var(--color-fond);
+  color:var(--color-texte);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+img, svg, video, canvas{max-width:100%;height:auto;display:block;}
+svg:not([fill]){fill:currentColor;}
+a{color:inherit;text-decoration:none;}
+
+/* Sélection */
+::selection{background-color:var(--color-accent);color:var(--color-fond);}
+::-moz-selection{background-color:var(--color-accent);color:var(--color-fond);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:var(--color-fond);}
+::-webkit-scrollbar-thumb{background:var(--color-surface);border-radius:0;}
+::-webkit-scrollbar-thumb:hover{background:var(--color-accent);}
+
+/* Focus Visible Global */
+:focus{outline:none;}
+:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}
+
+/* Typographie Hiérarchie */
+h1,h2,h3,h4{font-weight:var(--font-weight-bold);line-height:var(--line-height-heading);text-wrap:balance;margin:var(--space-l) 0 var(--space-s);}
+h1{font-size:var(--fs-step-3);letter-spacing:-0.02em;}
+h2{font-size:var(--fs-step-2);}
+h3{font-size:var(--fs-step-1);}
+p{margin:0 0 var(--space-s);max-width:var(--max-width-text);text-wrap:pretty;}
+ul,ol{list-style:none;}
+address{font-style:normal;}
+
+/* ============================================================
+   3. COMPOSANTS UI (CAHIER PARTIE C)
+   ============================================================ */
+
+/* --- Bouton --- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--space-s);
+  min-width:120px;height:48px;padding:0 var(--space-l);
+  font-family:inherit;font-size:var(--fs-step-0);font-weight:var(--font-weight-bold);
+  background-color:var(--color-surface);color:var(--color-texte);
+  border:none;border-radius:var(--radius-btn);cursor:pointer;
+  transition:background-color var(--duration-normal) var(--easing-standard), transform var(--duration-fast) var(--easing-standard), opacity var(--duration-fast);
+}
+.btn:hover{background-color:var(--color-accent);}
+.btn:active{transform:scale(0.98);}
+.btn:focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;pointer-events:none;}
+.btn--accent{background-color:var(--color-accent);color:var(--color-fond);}
+.btn--accent:hover{background-color:var(--color-surface);color:var(--color-texte);}
+
+/* --- Lien texte --- */
+.link{color:var(--color-texte-secondaire);text-underline-offset:2px;text-decoration:underline 2px solid transparent;transition:color var(--duration-fast), text-decoration-color var(--duration-fast);}
+.link:hover,.link:focus-visible{color:var(--color-accent);text-decoration-color:var(--color-accent);}
+
+/* --- Champ Formulaire --- */
+.form-group{display:grid;gap:var(--space-xs);width:100%;}
+.form-label{font-size:var(--fs-step--1);color:var(--color-texte-secondaire);}
+.form-input,.form-textarea,.form-select{
+  width:100%;font-family:inherit;font-size:var(--fs-step-0);line-height:1.5;
+  background-color:var(--color-fond);color:var(--color-texte);
+  border:1px solid var(--color-surface);border-radius:var(--radius);
+  padding:var(--space-s) var(--space-m);
+  transition:border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--color-texte-secondaire);opacity:1;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{
+  border-color:var(--color-accent);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--color-accent) 30%, transparent);
+  outline:none;
+}
+.form-input[aria-invalid="true"],.form-textarea[aria-invalid="true"]{border-color:var(--color-erreur);}
+.form-error{font-size:var(--fs-step--1);color:var(--color-erreur);min-height:1.2em;}
+
+/* ============================================================
+   4. LAYOUT & STRUCTURE (CAHIER PARTIE D)
+   ============================================================ */
+.container{width:var(--container-width);max-width:var(--container-max);margin-inline:auto;padding-inline:var(--space-m);}
+.section{padding-block:var(--space-3xl);position:relative;}
+.section-header{margin-bottom:var(--space-2xl);max-width:var(--max-width-text);}
+.section-title{margin-bottom:var(--space-xs);}
+.section-lead{color:var(--color-texte-secondaire);font-size:var(--fs-step-0);}
+
+/* --- Header / Navigation --- */
+.site-header{
+  position:fixed;top:0;left:0;right:0;height:var(--header-height);
+  background-color:var(--color-fond);border-bottom:1px solid var(--color-surface);
+  z-index:var(--z-header);display:flex;align-items:center;
+}
+.nav{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--space-m);gap:var(--space-l);}
+.nav-logo{flex-shrink:0;width:32px;height:32px;color:var(--color-surface);transition:color var(--duration-fast);}
+.nav-logo:hover,.nav-logo:focus-visible{color:var(--color-accent);}
+.nav-list{display:flex;gap:var(--space-m);flex-wrap:wrap;justify-content:center;flex:1;}
+.nav-link{font-size:var(--fs-step-0);color:var(--color-texte-secondaire);padding:var(--space-xs) 0;white-space:nowrap;transition:color var(--duration-fast);}
+.nav-link:hover,.nav-link:focus-visible{color:var(--color-accent);}
+
+/* ============================================================
+   5. SECTION 1 : CIRCUIT D'INTRODUCTION (PREMIER ÉCRAN)
+   ============================================================ */
+.hero-circuit{
+  min-height:100vh;display:grid;place-items:center;
+  padding-top:var(--header-height);position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 80% 80% at 50% 50%, color-mix(in srgb, var(--color-surface) 8%, transparent) 0%, transparent 70%), var(--color-fond);
+}
+.hero-circuit__svg{position:absolute;inset:0;width:100%;height:100%;max-width:800px;margin:auto;pointer-events:none;z-index:1;}
+.hero-circuit__trace{stroke:var(--color-surface);stroke-width:4;fill:none;opacity:0.3;stroke-linecap:round;stroke-linejoin:round;transition:opacity var(--duration-signature) var(--easing-standard), stroke-color var(--duration-signature) var(--easing-standard);}
+.hero-circuit__node{fill:var(--color-surface);opacity:0.6;transition:opacity var(--duration-normal), transform var(--duration-normal), fill var(--duration-normal);transform-origin:center;}
+.hero-circuit__node-label{font-size:var(--fs-step--1);fill:var(--color-texte-secondaire);text-anchor:middle;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity var(--duration-normal), transform var(--duration-normal);}
+
+.hero-circuit__cta{
+  position:relative;z-index:10;
+  width:120px;height:120px;border-radius:50%;
+  background-color:var(--color-surface);color:var(--color-texte);
+  border:none;cursor:pointer;display:grid;place-items:center;
+  font-family:inherit;font-size:var(--fs-step-1);font-weight:var(--font-weight-bold);text-align:center;line-height:1.2;
+  box-shadow:var(--shadow-elevation), 0 0 0 4px var(--color-fond), 0 0 20px -5px var(--color-surface);
+  transition:transform var(--duration-signature) var(--easing-standard), background-color var(--duration-signature) var(--easing-standard), box-shadow var(--duration-signature) var(--easing-standard), width var(--duration-signature) var(--easing-standard), height var(--duration-signature) var(--easing-standard), border-radius var(--duration-signature) var(--easing-standard), padding var(--duration-signature) var(--easing-standard);
+  padding:0; /* Reset padding for circle */
+}
+.hero-circuit__cta:hover{background-color:var(--color-accent);transform:scale(1.05);}
+.hero-circuit__cta:focus-visible{outline:2px solid var(--color-accent);outline-offset:4px;}
+.hero-circuit__cta-text{display:none;white-space:nowrap;opacity:0;transition:opacity var(--duration-normal) var(--easing-standard);}
+
+/* État Animé (déclenché par JS .is-animating sur .hero-circuit) */
+.hero-circuit.is-animating .hero-circuit__trace{animation:trace-draw var(--duration-signature) var(--easing-standard) forwards;}
+.hero-circuit.is-animating .hero-circuit__trace:nth-of-type(1){animation-delay:0ms;}
+.hero-circuit.is-animating .hero-circuit__trace:nth-of-type(2){animation-delay:200ms;}
+.hero-circuit.is-animating .hero-circuit__trace:nth-of-type(3){animation-delay:400ms;}
+
+.hero-circuit.is-animating .hero-circuit__node{animation:node-pulse var(--duration-signature) var(--easing-standard) forwards;}
+.hero-circuit.is-animating .hero-circuit__node:nth-of-type(1){animation-delay:100ms;}
+.hero-circuit.is-animating .hero-circuit__node:nth-of-type(2){animation-delay:300ms;}
+.hero-circuit.is-animating .hero-circuit__node:nth-of-type(3){animation-delay:500ms;}
+
+.hero-circuit.is-animating .hero-circuit__node-label{animation:label-reveal var(--duration-normal) var(--easing-standard) forwards;}
+.hero-circuit.is-animating .hero-circuit__node-label:nth-of-type(1){animation-delay:600ms;}
+.hero-circuit.is-animating .hero-circuit__node-label:nth-of-type(2){animation-delay:700ms;}
+.hero-circuit.is-animating .hero-circuit__node-label:nth-of-type(3){animation-delay:800ms;}
+
+.hero-circuit.is-animating .hero-circuit__cta{
+  animation:chip-transform var(--duration-signature) var(--easing-standard) 600ms forwards;
+  background-color:var(--color-accent); /* Final state */
+}
+.hero-circuit.is-animating .hero-circuit__cta-text{animation:cta-text-reveal var(--duration-normal) var(--easing-standard) 1.4s forwards;display:block;}
+
+@keyframes trace-draw{from{stroke-dashoffset:var(--trace-length, 1000);opacity:0.3;stroke:var(--color-surface);}to{stroke-dashoffset:0;opacity:1;stroke:var(--color-accent);}}
+@keyframes node-pulse{0%{opacity:0.6;transform:scale(1);fill:var(--color-surface);}50%{opacity:1;transform:scale(1.3);fill:var(--color-accent);}100%{opacity:1;transform:scale(1);fill:var(--color-accent);}}
+@keyframes label-reveal{to{opacity:1;transform:translateY(0);}}
+@keyframes chip-transform{
+  0%{width:120px;height:120px;border-radius:50%;padding:0;background:var(--color-surface);box-shadow:var(--shadow-elevation), 0 0 0 4px var(--color-fond), 0 0 20px -5px var(--color-surface);}
+  50%{width:120px;height:120px;border-radius:50%;background:var(--color-accent);box-shadow:var(--shadow-elevation), 0 0 0 4px var(--color-fond), 0 0 30px -5px var(--color-accent);}
+  100%{width:280px;height:56px;border-radius:0;padding:0 var(--space-xl);background:var(--color-accent);box-shadow:var(--shadow-elevation);}
+}
+@keyframes cta-text-reveal{to{opacity:1;}}
+
+/* Responsive Hero */
+@media (max-width:480px){
+  .hero-circuit__cta{font-size:var(--fs-step-0);}
+  .hero-circuit.is-animating .hero-circuit__cta{width:90vw;max-width:320px;}
+  .hero-circuit__node-label{font-size:0.7rem;}
+}
+
+/* ============================================================
+   6. SECTION 2 : NOS EXPERTISES (Liste verticale)
+   ============================================================ */
+.expertises-list{display:flex;flex-direction:column;gap:var(--space-xl);max-width:70vw;margin-inline:auto;}
+@media (max-width:768px){.expertises-list{max-width:var(--container-width);}}
+.expertise-item{display:grid;grid-template-columns:auto 1fr;gap:var(--space-l);align-items:start;padding-block:var(--space-m);border-top:1px solid var(--color-surface);}
+.expertise-item:first-child{border-top:none;}
+.expertise-icon{width:48px;height:48px;flex-shrink:0;color:var(--color-surface);transition:color var(--duration-normal), transform var(--duration-normal);}
+.expertise-item:hover .expertise-icon,.expertise-item:focus-within .expertise-icon{color:var(--color-accent);transform:translateX(4px);}
+.expertise-content{display:flex;flex-direction:column;gap:var(--space-xs);}
+.expertise-title{font-size:var(--fs-step-1);margin:0;}
+.expertise-desc{color:var(--color-texte-secondaire);margin:0;max-width:none;}
+
+/* ============================================================
+   7. SECTION 3 : PROJETS PHARES (Carrousel)
+   ============================================================ */
+.projects-carousel{display:flex;gap:var(--space-l);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 var(--space-m);padding-block:var(--space-m);margin-inline:calc(-1 * var(--space-m));padding-inline:var(--space-m);}
+.projects-carousel::-webkit-scrollbar{display:none;}
+.projects-carousel{-ms-overflow-style:none;scrollbar-width:none;}
+.project-slide{flex:0 0 clamp(280px, 85vw, 500px);scroll-snap-align:center;display:grid;grid-template-rows:auto 1fr auto;background:linear-gradient(180deg, var(--color-fond) 0%, #111 100%);border:1px solid var(--color-surface);position:relative;isolation:isolate;}
+.project-slide__visual{aspect-ratio:4/3;display:grid;place-items:center;background:var(--color-fond);position:relative;overflow:hidden;}
+.project-slide__visual svg{width:80%;height:80%;max-width:200px;color:var(--color-surface);opacity:0.8;transition:opacity var(--duration-normal), transform var(--duration-normal);}
+.project-slide:hover .project-slide__visual svg,.project-slide:focus-within .project-slide__visual svg{opacity:1;transform:scale(1.05);color:var(--color-accent);}
+.project-slide__content{padding:var(--space-l);display:flex;flex-direction:column;gap:var(--space-xs);}
+.project-slide__category{font-size:var(--fs-step--1);color:var(--color-accent);font-weight:var(--font-weight-bold);text-transform:uppercase;letter-spacing:0.05em;}
+.project-slide__title{font-size:var(--fs-step-1);margin:0;line-height:1.3;}
+.project-slide__link{display:inline-flex;align-items:center;gap:var(--space-xs);margin-top:var(--space-s);font-size:var(--fs-step--1);color:var(--color-texte-secondaire);width:fit-content;}
+.project-slide__link:hover,.project-slide__link:focus-visible{color:var(--color-accent);}
+.project-slide__link svg{width:16px;height:16px;transition:transform var(--duration-fast);}
+.project-slide__link:hover svg,.project-slide__link:focus-visible svg{transform:translateX(4px);}
+
+/* Flèches navigation (CSS only fallback, JS enhanced) */
+.carousel-nav{display:flex;justify-content:center;gap:var(--space-m);margin-top:var(--space-xl);}
+.carousel-btn{width:44px;height:44px;border-radius:50%;background:var(--color-fond);border:1px solid var(--color-surface);color:var(--color-surface);display:grid;place-items:center;cursor:pointer;transition:all var(--duration-fast);}
+.carousel-btn:hover,.carousel-btn:focus-visible{border-color:var(--color-accent);color:var(--color-accent);background:var(--color-surface);}
+.carousel-btn svg{width:20px;height:20px;}
+.carousel-btn:disabled{opacity:0.3;cursor:not-allowed;}
+
+/* ============================================================
+   8. SECTION 4 : ATELIERS & ÉVÉNEMENTS (Liste chronologique)
+   ============================================================ */
+.events-list{display:flex;flex-direction:column;gap:0;max-width:var(--max-width-text);margin-inline:auto;}
+.event-item{display:grid;grid-template-columns:auto 1fr;gap:var(--space-l);padding:var(--space-l) 0;border-top:1px solid var(--color-surface);align-items:start;transition:color var(--duration-fast);}
+.event-item:first-child{border-top:none;}
+.event-item:hover,.event-item:focus-within{color:var(--color-accent);}
+.event-date{font-size:var(--fs-step-0);font-weight:var(--font-weight-bold);color:var(--color-accent);white-space:nowrap;min-width:80px;padding-top:2px;}
+.event-details{display:flex;flex-direction:column;gap:var(--space-xs);}
+.event-title{font-size:var(--fs-step-1);margin:0;transition:color var(--duration-fast);}
+.event-item:hover .event-title,.event-item:focus-within .event-title{color:var(--color-accent);}
+.event-desc{color:var(--color-texte-secondaire);margin:0;max-width:none;font-size:var(--fs-step-0);}
+
+/* ============================================================
+   9. SECTION 5 : APPEL FINAL / CONTACT
+   ============================================================ */
+.cta-final{background-color:var(--color-fond);border-top:1px solid var(--color-surface);text-align:center;}
+.cta-final__form{max-width:560px;margin-inline:auto;text-align:left;display:grid;gap:var(--space-l);}
+.cta-final__fields{display:grid;gap:var(--space-m);}
+@media (min-width:600px){.cta-final__fields{grid-template-columns:1fr 1fr;}}
+.cta-final__fields > .form-group:last-child{grid-column:1/-1;}
+.cta-final__submit{justify-self:center;min-width:200px;}
+.cta-final__socials{display:flex;justify-content:center;gap:var(--space-l);margin-top:var(--space-2xl);padding-top:var(--space-xl);border-top:1px solid var(--color-surface);}
+.social-link{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--color-surface);color:var(--color-texte-secondaire);transition:all var(--duration-fast);}
+.social-link:hover,.social-link:focus-visible{border-color:var(--color-accent);color:var(--color-accent);background:var(--color-surface);}
+.social-link svg{width:20px;height:20px;}
+
+/* ============================================================
+   10. FOOTER
+   ============================================================ */
+.site-footer{padding:var(--space-xl) var(--space-m);text-align:center;border-top:1px solid var(--color-surface);font-size:var(--fs-step--1);color:var(--color-texte-secondaire);}
+
+/* ============================================================
+   11. UTILITAIRES & ACCESSIBILITÉ
+   ============================================================ */
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.skip-link{position:absolute;top:-100%;left:50%;transform:translateX(-50%);background:var(--color-accent);color:var(--color-fond);padding:var(--space-s) var(--space-l);z-index:9999;font-weight:var(--font-weight-bold);border-radius:var(--radius);}
+.skip-link:focus{top:var(--space-m);outline:2px solid var(--color-texte);outline-offset:2px;}
