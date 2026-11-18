@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Catalogue des projets réalisés par les membres : électronique, impression 3D, modding et programmation. Filtres par catégorie, technologies et dossiers techniques publics.">
+<title>Projets — Association Electronique & Fabrication Numérique</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    margin-bottom: var(--space-xl);
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid rgba(168, 213, 192, 0.3);
+    color: var(--color-texte);
+    padding: var(--space-s) var(--space-m);
+    font: inherit;
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--easing-standard),
+                color var(--duration-fast) var(--easing-standard),
+                border-color var(--duration-fast) var(--easing-standard);
+  }
+  .filter-btn:hover {
+    border-color: var(--color-accent);
+  }
+  .filter-btn.is-active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-fond);
+  }
+  .filter-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-xl);
+  }
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(42, 111, 91, 0.12);
+    border: 1px solid rgba(168, 213, 192, 0.2);
+    overflow: hidden;
+  }
+  .project-card[hidden] {
+    display: none;
+  }
+  .project-card__visual {
+    aspect-ratio: 2 / 1;
+    background: rgba(10, 10, 10, 0.4);
+    border-bottom: 1px solid rgba(168, 213, 192, 0.2);
+    padding: var(--space-m);
+    box-sizing: border-box;
+  }
+  .project-card__visual svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: var(--color-texte-secondaire);
+  }
+  .project-card__content {
+    padding: var(--space-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    flex: 1;
+  }
+  .project-card__category {
+    font-size: var(--fs-step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    margin: 0;
+  }
+  .project-card__title {
+    font-size: var(--fs-step-1);
+    line-height: var(--line-height-heading);
+    margin: 0;
+  }
+  .project-card__desc {
+    margin: 0;
+    color: var(--color-texte-secondaire);
+  }
+  .project-card__tech {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .project-card__tech li {
+    font-size: var(--fs-step--1);
+    border: 1px solid rgba(168, 213, 192, 0.3);
+    padding: 2px 8px;
+    color: var(--color-texte);
+  }
+  .project-card__link {
+    margin-top: auto;
+    align-self: flex-start;
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .project-card__link:hover,
+  .project-card__link:focus {
+    border-bottom-color: var(--color-accent);
+  }
+  .project-card__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .dossiers {
+    margin-top: var(--space-3xl);
+  }
+  .dossiers h2 {
+    font-size: var(--fs-step-2);
+    margin-bottom: var(--space-l);
+  }
+  .dossier {
+    border: 1px solid rgba(168, 213, 192, 0.2);
+    margin-bottom: var(--space-m);
+    background: rgba(42, 111, 91, 0.08);
+  }
+  .dossier summary {
+    padding: var(--space-m) var(--space-l);
+    cursor: pointer;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-texte);
+  }
+  .dossier summary:hover {
+    color: var(--color-accent);
+  }
+  .dossier__content {
+    padding: 0 var(--space-l) var(--space-l);
+    color: var(--color-texte-secondaire);
+  }
+  .dossier__content p {
+    margin: 0 0 var(--space-s);
+  }
+  .dossier__content ul {
+    margin: 0;
+    padding-left: var(--space-l);
+  }
+  .site-footer {
+    padding: var(--space-2xl) 0;
+    border-top: 1px solid rgba(168, 213, 192, 0.2);
+  }
+  .site-footer p {
+    margin: 0;
+    color: var(--color-texte-secondaire);
+  }
+  .footer-nav {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    padding: 0;
+    margin: var(--space-m) 0 0;
+  }
+  .footer-nav a {
+    color: var(--color-texte-secondaire);
+    text-decoration: none;
+  }
+  .footer-nav a:hover,
+  .footer-nav a:focus {
+    color: var(--color-accent);
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header class="site-header" role="banner">
+  <nav class="nav" aria-label="Navigation principale">
+    <svg class="nav-logo" aria-hidden="true" viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="24" height="24" rx="2" stroke="currentColor" stroke-width="2"/><path d="M12 12h8M12 16h8M12 20h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <ul class="nav-list" role="list">
+      <li><a href="index.html#accueil" class="nav-link">Accueil</a></li>
+      <li><a href="index.html#expertises" class="nav-link">Expertises</a></li>
+      <li><a href="projets.html" class="nav-link" aria-current="page">Projets</a></li>
+      <li><a href="index.html#ateliers" class="nav-link">Ateliers</a></li>
+      <li><a href="rejoindre.html" class="nav-link">Rejoindre</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main" role="main">
+  <section class="section" aria-labelledby="projets-title">
+    <div class="container">
+      <header class="section-header">
+        <h1 id="projets-title" class="section-title">Projets</h1>
+        <p class="section-lead">Catalogue des réalisations des membres. Filtrez par catégorie pour retrouver les circuits, impressions, mods et programmes publiés.</p>
+      </header>
+
+      <div class="filters" role="group" aria-label="Filtrer les projets par catégorie">
+        <button type="button" class="filter-btn is-active" data-filter="all" aria-pressed="true">Tous</button>
+        <button type="button" class="filter-btn" data-filter="electronique" aria-pressed="false">Électronique</button>
+        <button type="button" class="filter-btn" data-filter="impression-3d" aria-pressed="false">Impression 3D</button>
+        <button type="button" class="filter-btn" data-filter="modding" aria-pressed="false">Modding</button>
+        <button type="button" class="filter-btn" data-filter="programmation" aria-pressed="false">Programmation</button>
+      </div>
+
+      <p class="visually-hidden" id="filter-status" aria-live="polite"></p>
+
+      <div class="projects-grid" id="projects-grid">
+        <article class="project-card" data-category="electronique">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <rect x="20" y="20" width="360" height="160" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M40 60 H120 V100 H200 V60 H280 V140 H360" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M40 140 H80 V100 H160 V140 H240 V100 H320 V140 H360" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <rect x="180" y="80" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="60" cy="60" r="4" fill="currentColor"/>
+              <circle cx="340" cy="140" r="4" fill="var(--color-accent)"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Électronique</p>
+            <h2 class="project-card__title">Carte de commande pour CNC</h2>
+            <p class="project-card__desc">Carte de contrôle pour piloter les moteurs d'une fraiseuse numérique. Conception du PCB, routage des pistes de puissance et tests de signal.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>PCB</li>
+              <li>Soudure CMS</li>
+              <li>Microcontrôleur</li>
+            </ul>
+            <a href="#dossier-cnc" class="project-card__link">Dossier technique</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="electronique">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <rect x="20" y="20" width="360" height="160" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M40 60 H120 V100 H200 V60 H280 V140 H360" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M40 140 H80 V100 H160 V140 H240 V100 H320 V140 H360" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <rect x="180" y="80" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="60" cy="60" r="4" fill="currentColor"/>
+              <circle cx="340" cy="140" r="4" fill="var(--color-accent)"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Électronique</p>
+            <h2 class="project-card__title">Alimentation stabilisée de laboratoire</h2>
+            <p class="project-card__desc">Module d'alimentation réglable avec régulation de tension et protection contre les courts-circuits. Montage sur plaque d'essai puis intégration dans un boîtier.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>Régulateur</li>
+              <li>Soudure THT</li>
+              <li>Mesure</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="impression-3d">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M200 40 L280 80 L280 160 L200 200 L120 160 L120 80 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M200 40 L200 120 M120 80 L200 120 L280 80 M200 120 L200 200" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <path d="M160 100 L200 80 L240 100 L200 120 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Impression 3D</p>
+            <h2 class="project-card__title">Boîtier pour module électronique</h2>
+            <p class="project-card__desc">Boîtier imprimé en FDM pour protéger un module de commande. Modélisation CAO, ajustement des tolérances et montage des inserts.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>CAO</li>
+              <li>Impression FDM</li>
+              <li>Inserts</li>
+            </ul>
+            <a href="#dossier-boitier" class="project-card__link">Dossier technique</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="impression-3d">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M200 40 L280 80 L280 160 L200 200 L120 160 L120 80 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M200 40 L200 120 M120 80 L200 120 L280 80 M200 120 L200 200" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <path d="M160 100 L200 80 L240 100 L200 120 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Impression 3D</p>
+            <h2 class="project-card__title">Support de capteurs</h2>
+            <p class="project-card__desc">Support imprimé pour fixer des capteurs sur un montage mobile. Conception paramétrique et impression en résine pour les pièces fines.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>CAO</li>
+              <li>Résine</li>
+              <li>Supports</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="modding">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M120 80 C120 60 140 40 160 40 H240 C260 40 280 60 280 80 V120 C280 140 260 160 240 160 H160 C140 160 120 140 120 120 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="160" cy="100" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="240" cy="100" r="12" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <path d="M180 140 H220" stroke="currentColor" stroke-width="2"/>
+              <path d="M200 140 V160" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Modding</p>
+            <h2 class="project-card__title">Console portable</h2>
+            <p class="project-card__desc">Modification d'une console pour l'intégrer dans un boîtier imprimé. Câblage, gestion de l'alimentation et adaptation de l'affichage.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>Soudure</li>
+              <li>Câblage</li>
+              <li>Impression 3D</li>
+            </ul>
+            <a href="#dossier-console" class="project-card__link">Dossier technique</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="modding">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M120 80 C120 60 140 40 160 40 H240 C260 40 280 60 280 80 V120 C280 140 260 160 240 160 H160 C140 160 120 140 120 120 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="160" cy="100" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="240" cy="100" r="12" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
+              <path d="M180 140 H220" stroke="currentColor" stroke-width="2"/>
+              <path d="M200 140 V160" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Modding</p>
+            <h2 class="project-card__title">Réparation de manette</h2>
+            <p class="project-card__desc">Remplacement des sticks et nettoyage des contacts. Diagnostic de la panne et remise en état de la manette.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>Soudure</li>
+              <li>Diagnostic</li>
+              <li>Micro-soudure</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="programmation">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M120 60 L80 100 L120 140" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M280 60 L320 100 L280 140" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M220 40 L180 160" stroke="var(--color-accent)" stroke-width="2"/>
+              <rect x="140" y="80" width="120" height="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M160 100 H240" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Programmation</p>
+            <h2 class="project-card__title">Station météo</h2>
+            <p class="project-card__desc">Programme de collecte de données de capteurs et affichage sur écran. Structure modulaire du code et gestion des erreurs.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>C</li>
+              <li>Capteurs</li>
+              <li>Écran</li>
+            </ul>
+            <a href="#dossier-meteo" class="project-card__link">Dossier technique</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-category="programmation">
+          <div class="project-card__visual">
+            <svg viewBox="0 0 400 200" aria-hidden="true" focusable="false">
+              <path d="M120 60 L80 100 L120 140" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M280 60 L320 100 L280 140" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M220 40 L180 160" stroke="var(--color-accent)" stroke-width="2"/>
+              <rect x="140" y="80" width="120" height="40" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M160 100 H240" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="project-card__content">
+            <p class="project-card__category">Programmation</p>
+            <h2 class="project-card__title">Bot de test</h2>
+            <p class="project-card__desc">Script de test automatisé pour vérifier les fonctions d'un module. Journalisation des résultats et rapport d'exécution.</p>
+            <ul class="project-card__tech" aria-label="Technologies utilisées">
+              <li>Python</li>
+              <li>Tests</li>
+              <li>Journalisation</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <section class="dossiers" aria-labelledby="dossiers-title">
+        <h2 id="dossiers-title">Dossiers techniques</h2>
+
+        <details class="dossier" id="dossier-cnc">
+          <summary>Dossier technique — Carte de commande pour CNC</summary>
+          <div class="dossier__content">
+            <p>Ce dossier regroupe les éléments nécessaires pour reprendre le projet : schéma de câblage, liste de composants et structure du firmware.</p>
+            <ul>
+              <li>Schéma de câblage des entrées et sorties</li>
+              <li>Liste de composants et références</li>
+              <li>Structure du firmware et points de test</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="dossier" id="dossier-boitier">
+          <summary>Dossier technique — Boîtier pour module électronique</summary>
+          <div class="dossier__content">
+            <p>Ce dossier contient les fichiers de modélisation et les paramètres d'impression utilisés pour produire le boîtier.</p>
+            <ul>
+              <li>Fichiers CAO du boîtier et du couvercle</li>
+              <li>Paramètres d'impression FDM</li>
+              <li>Plan de montage des inserts</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="dossier" id="dossier-console">
+          <summary>Dossier technique — Console portable</summary>
+          <div class="dossier__content">
+            <p>Ce dossier décrit les étapes de modification, le câblage et les adaptations mécaniques réalisées sur la console.</p>
+            <ul>
+              <li>Schéma de câblage et repérage des connexions</li>
+              <li>Liste des pièces imprimées</li>
+              <li>Notes d'assemblage et précautions</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="dossier" id="dossier-meteo">
+          <summary>Dossier technique — Station météo</summary>
+          <div class="dossier__content">
+            <p>Ce dossier présente la structure du programme, la configuration des capteurs et les modalités de test.</p>
+            <ul>
+              <li>Arborescence du code source</li>
+              <li>Configuration des capteurs et de l'écran</li>
+              <li>Procédure de test et journalisation</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>Association étudiante — électronique, modding, informatique et fabrication numérique.</p>
+    <nav aria-label="Navigation de pied de page">
+      <ul class="footer-nav" role="list">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="projets.html">Projets</a></li>
+        <li><a href="rejoindre.html">Rejoindre</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+  const filterStatus = document.getElementById('filter-status');
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+
+      filterButtons.forEach((btn) => {
+        const isActive = btn === button;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+
+      let visibleCount = 0;
+
+      projectCards.forEach((card) => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.hidden = !show;
+        if (show) {
+          visibleCount += 1;
+        }
+      });
+
+      filterStatus.textContent = visibleCount + ' projet' + (visibleCount > 1 ? 's' : '') + ' affiché' + (visibleCount > 1 ? 's' : '') + '.';
+    });
+  });
+</script>
+
+</body>
+</html>
